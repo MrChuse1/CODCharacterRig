@@ -2,27 +2,27 @@ import maya.cmds as cmds
 
 # Call of Duty Rigging Tool
 # By MrChuse
-# Version 1.0
+# Version 1.0.0.2
 
-debug = False
-
-if debug:
+debug = True
+debugScene = 'IW9'
+if debugScene == 'BO4':
     
     # Open the test scene
     cmds.file(r"D:\OneDrive\Scripts\MrChuse\CODRig\BO3Test\BO4Test.ma", o=True, f=True)
+elif debugScene == 'IW9':
+    
+    # Open the test scene
+    cmds.file(r"D:\OneDrive\Scripts\MrChuse\CODRig\IW9Test\IW9Test.ma", o=True, f=True)
     
 Joints = {
-            'j_mainroot': {'name': 'Main_Root', 'color': (0,1,0), 'tOffset': (0,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (16,21,10), 'parent': 'Origin', 'thickness': 3,},
-            'j_spinelower': {'name': 'Spine_Lower', 'color': (0,1,0), 'tOffset': (1,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (14,19,10), 'parent': 'Main_Root', 'thickness': 1,},
-            'j_spineupper': {'name': 'Spine_Upper', 'color': (0,1,0), 'tOffset': (2,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (14,19,10), 'parent': 'Spine_Lower', 'thickness': 1,},
-            'j_spine4': {'name': 'Spine_4', 'color': (0,1,0), 'tOffset': (2,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (15,20,10), 'parent': 'Spine_Upper', 'thickness': 2,},
+            'j_mainroot': {'name': 'Main_Root', 'color': (0,1,0), 'tOffset': (0,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (19,24,10), 'parent': 'Origin', 'thickness': 3,},
+            'j_spinelower': {'name': 'Spine_Lower', 'color': (0,1,0), 'tOffset': (1,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (13,22,10), 'parent': 'Main_Root', 'thickness': 1,},
+            'j_spineupper': {'name': 'Spine_Upper', 'color': (0,1,0), 'tOffset': (2,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (13,22,10), 'parent': 'Spine_Lower', 'thickness': 1,},
+            'j_spine4': {'name': 'Spine_4', 'color': (0,1,0), 'tOffset': (2,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (17,22,10), 'parent': 'Spine_Upper', 'thickness': 2,},
             'j_neck': {'name': 'Neck', 'color': (0.8,0,1), 'tOffset': (0,0,4), 'tLock': True, 'rotate': (0,30,0), 'rLock': False, 'scale': (12,12,12), 'parent': 'Spine_4', 'thickness': 2},
             'j_neck2': {'name': 'Upper_Neck', 'color': (0.8,0,1), 'tOffset': (1,0,0), 'tLock': True, 'rotate': (0,20,0), 'rLock': False, 'scale': (8,8,8), 'parent': 'Neck', 'thickness': 2},
             'j_head': {'name': 'Head', 'color': (0.8,0,1), 'tOffset': (4,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (10,10,10), 'parent': 'Upper_Neck', 'thickness': 5},
-            
-            # FK Joints
-    
-            # 'j_shoulder_le_FK': {'name': 'Left_Shoulder', 'color': (0,0,1), 'tOffset': (4,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (6,6,6), 'parent': 'Spine_4', 'thickness': 3},
 }
 IKs = {
     'Left_Arm': {'joint': 'j_shoulder_le', 'effector': 'j_wrist_le', 'solver': 'j_elbow_le', 'name': 'Left_Arm', 'rotate': (-144.176,62.738,-125.098), 'tOffset': (0,0,0), 'scale': (6,6,6), 'IK/FKSwitchLoc': (0,0,0), 'color': (0,0,1)},
@@ -45,7 +45,20 @@ FKs = {
     'Right_Leg': {'joint': 'j_hip_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Main_Root', 'color': (1,0.2,0)},
     'Right_Knee': {'joint': 'j_knee_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Right_Leg', 'color': (1,0.2,0)},
     'Right_Ankle': {'joint': 'j_ankle_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Right_Knee', 'color': (1,0.2,0)},
-    
+}
+
+Fingers = {
+    'Left_Index': {'joint': 'j_index_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left_Middle': {'joint': 'j_mid_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left_Ring': {'joint': 'j_ring_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left_Pinky': {'joint': 'j_pinky_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left Thumb': {'joint': 'j_thumb_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+
+    'Right_Index': {'joint': 'j_index_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right_Middle': {'joint': 'j_mid_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right_Ring': {'joint': 'j_ring_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right_Pinky': {'joint': 'j_pinky_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right Thumb': {'joint': 'j_thumb_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
 }
 Controls = ['Origin']
 
@@ -354,6 +367,7 @@ def CreateCurve(name='curve', shape=None, color=(0,1,0), translate=(0,0,0), tOff
 
         
     print((rotate[0]), (rotate[1]), (rotate[2]))
+    
     # Position the curve correctly
     cmds.move(translate[0] + tOffset[0], translate[1] + tOffset[1], translate[2] + tOffset[2], crv)
     cmds.rotate((rotate[0]), (rotate[1]), (rotate[2]), crv)
@@ -377,6 +391,14 @@ def CreateCurve(name='curve', shape=None, color=(0,1,0), translate=(0,0,0), tOff
     # freeze the transforms
     if freeze:
         cmds.makeIdentity(crv, apply=True, t=1, r=1, s=1, n=0)
+    
+    # Lock the transforms
+    if tLock:
+        cmds.setAttr(crv + '.translate', lock=True)
+    if rLock:
+        cmds.setAttr(crv + '.rotate', lock=True)
+        
+    cmds.setAttr(crv + '.scale', lock=True)
     
     return crv
     
@@ -518,8 +540,43 @@ def CreateIkHandle(joint, effector, solver, name:str, rotate=(0,0,0), tOffset=(0
     cmds.orientConstraint(ikControl, effector, mo=True)
 
 
+def CreateFingerControls(fingerName, finger):
+    
+        fControls = ['Spine_4']
+        
+        # Loop through each part of the finger
+        for i in range(1,4):
+            
+            # Check if the game uses IW finger joints
+            if cmds.objExists((finger['joint']).replace('j_', 'j_meta') + '_1'):
+                if debug: print("MW finger found")
+                rOffset = (180,0,0)
+            
+            # Use Treyarch finger joints
+            else:
+                if debug: print((finger['joint']).replace('j_', 'j_meta') + '_1' + " finger not found")
+                
+                # Check what hand it is
+                if finger['joint'].endswith('_ri'): # Right hand
+                    if debug: print("RI finger found")
+                    rOffset = (0,0,0)
+                else: # Left hand
+                    if debug: print(finger['joint'] + " finger not found")
+                    rOffset = (180,0,0)
+                    
+            # Get the rotation of the joint
+            rotation = cmds.xform(finger['joint'] + '_' + str(i), q=True, ws=True, ro=True)
+            rotation = (rotation[0] + rOffset[0], rotation[1] + rOffset[1], rotation[2] + rOffset[2])
+            
+            # Create the control
+            control = CreateControl2(joint=(finger['joint'] + '_' + str(i)), name=fingerName + '_' + str(i), shape='Sphere Pin', color=finger['color'],
+                                     tlock=False, rotate=rotation, rLock=False, scale=(0.6,0.6,0.6), parent=fControls[-1], thickness=2)
+            
+            fControls.append(control)
 
-
+        return fControls[1]
+        
+        
 
 
 
@@ -534,14 +591,13 @@ if __name__ == "__main__":
     # Create the origin curve
     CreateControl('tag_origin', name='Origin', shape='Arrow', rotate=(90,0,0), scale=(20,20,20), parent='Joints')
 
-    
-
     ## Create the IK joints
     
     # Create a group for the IK/FK joints
     IK_FK_Group = cmds.group(n='IK_FK_Joints', em=True)
     IK_FK_Group = cmds.parent(IK_FK_Group, 'Origin', absolute=True)
     
+    # Loop for each IK
     for kinematic in IKs:
         # Create the IK/FK switch
         switchLoc = (0,0,0)
@@ -593,9 +649,21 @@ if __name__ == "__main__":
     for i,fk in enumerate(FKs):
 
         
-        control = CreateControl2(joint=FKs[fk]['joint'], name=fk, shape='Sphere Pin', color=FKs[fk]['color'], tOffset=FKs[fk]['tOffset'], tlock=False, rotate=FKs[fk]['rotate'], rLock=False, scale=(1.5,1.5,1.5), parent=FKs[fk]['parent'], thickness=2, freeze=False)
+        control = CreateControl2(joint=FKs[fk]['joint'], name=fk, shape='Sphere Pin', color=FKs[fk]['color'], tOffset=FKs[fk]['tOffset'], tlock=False, rotate=FKs[fk]['rotate'], rLock=False, scale=(1.5,1.5,1.5), parent=FKs[fk]['parent'], thickness=2)
 
+
+
+    ## Create the finger controls
+    
+    # Loop for each finger
+    for i,finger in enumerate(Fingers):
         
-            
-            
+        # Create the finger controls for each part of the finger
+        fControl = CreateFingerControls(finger, Fingers[finger])
+        
+        # Creete a group for the finger controls
+        fGroup = cmds.group(fControl, n=finger + '_Controls', a=True)
+        
+        # Parent the finger controls to the wrist
+        cmds.parentConstraint([Fingers[finger]['parent']], fGroup, mo=True)
     
