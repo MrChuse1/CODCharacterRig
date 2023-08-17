@@ -2,10 +2,12 @@ import maya.cmds as cmds
 
 # Call of Duty Rigging Tool
 # By MrChuse
-# Version 1.0.0.2
+# Version 1.0.1.1
 
-debug = True
-debugScene = 'IW9'
+# Added Spine IK
+
+debug = False
+debugScene = ''
 if debugScene == 'BO4':
     
     # Open the test scene
@@ -16,13 +18,16 @@ elif debugScene == 'IW9':
     cmds.file(r"D:\OneDrive\Scripts\MrChuse\CODRig\IW9Test\IW9Test.ma", o=True, f=True)
     
 Joints = {
-            'j_mainroot': {'name': 'Main_Root', 'color': (0,1,0), 'tOffset': (0,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (19,24,10), 'parent': 'Origin', 'thickness': 3,},
-            'j_spinelower': {'name': 'Spine_Lower', 'color': (0,1,0), 'tOffset': (1,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (13,22,10), 'parent': 'Main_Root', 'thickness': 1,},
-            'j_spineupper': {'name': 'Spine_Upper', 'color': (0,1,0), 'tOffset': (2,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (13,22,10), 'parent': 'Spine_Lower', 'thickness': 1,},
-            'j_spine4': {'name': 'Spine_4', 'color': (0,1,0), 'tOffset': (2,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (17,22,10), 'parent': 'Spine_Upper', 'thickness': 2,},
-            'j_neck': {'name': 'Neck', 'color': (0.8,0,1), 'tOffset': (0,0,4), 'tLock': True, 'rotate': (0,30,0), 'rLock': False, 'scale': (12,12,12), 'parent': 'Spine_4', 'thickness': 2},
-            'j_neck2': {'name': 'Upper_Neck', 'color': (0.8,0,1), 'tOffset': (1,0,0), 'tLock': True, 'rotate': (0,20,0), 'rLock': False, 'scale': (8,8,8), 'parent': 'Neck', 'thickness': 2},
-            'j_head': {'name': 'Head', 'color': (0.8,0,1), 'tOffset': (4,0,0), 'tLock': True, 'rotate': (0,0,0), 'rLock': False, 'scale': (10,10,10), 'parent': 'Upper_Neck', 'thickness': 5},
+            'j_neck': {'name': 'Neck', 'color': (0.8,0,1), 'tOffset': (0,0,4), 'rotate': (0,30,0), 'scale': (12,12,12), 'parent': 'Spine_4', 'thickness': 2},
+            'j_neck2': {'name': 'Upper_Neck', 'color': (0.8,0,1), 'tOffset': (1,0,0), 'rotate': (0,20,0), 'scale': (8,8,8), 'parent': 'Neck', 'thickness': 2},
+            'j_head': {'name': 'Head', 'color': (0.8,0,1), 'tOffset': (4,0,0), 'rotate': (0,0,0), 'scale': (10,10,10), 'parent': 'Upper_Neck', 'thickness': 5},
+}
+SpineJoints = {
+    'j_mainroot': {'name': 'Main_Root', 'color': (0,1,0), 'tOffset': (0,0,0), 'rotate': (0,0,0), 'scale': (19,24,10), 'parent': 'Origin', 'thickness': 3,},
+    'j_spinelower': {'name': 'Spine_Lower', 'color': (0,1,0), 'tOffset': (1,0,0), 'rotate': (0,0,0), 'scale': (13,22,10), 'parent': 'Main_Root', 'thickness': 1,},
+    'j_spineupper': {'name': 'Spine_Upper', 'color': (0,1,0), 'tOffset': (2,0,0), 'rotate': (0,0,0), 'scale': (13,22,10), 'parent': 'Spine_Lower', 'thickness': 1,},
+    'j_spine4': {'name': 'Spine_4', 'color': (0,1,0), 'tOffset': (2,0,0), 'rotate': (0,0,0), 'scale': (17,22,10), 'parent': 'Spine_Upper', 'thickness': 2,},
+    
 }
 IKs = {
     'Left_Arm': {'joint': 'j_shoulder_le', 'effector': 'j_wrist_le', 'solver': 'j_elbow_le', 'name': 'Left_Arm', 'rotate': (-144.176,62.738,-125.098), 'tOffset': (0,0,0), 'scale': (6,6,6), 'IK/FKSwitchLoc': (0,0,0), 'color': (0,0,1)},
@@ -32,33 +37,33 @@ IKs = {
 }
 
 FKs = {
-    'Left_Shoulder': {'joint': 'j_shoulder_le_FK', 'rotate': (90,34,70), 'tOffset': (0,0,0), 'tLock': False, 'parent': 'Spine_4', 'color': (0.2,0,1)},
-    'Left_Elbow': {'joint': 'j_elbow_le_FK', 'rotate': (0,0,45), 'tOffset': (0,0,0), 'tLock': False, 'parent': 'Left_Shoulder', 'color': (0.2,0,1)},
-    'Left_Wrist': {'joint': 'j_wrist_le_FK', 'rotate': (55,-28,-58), 'tOffset': (0,0,0), 'tLock': False, 'parent': 'Left_Elbow', 'color': (0.2,0,1)},
-    'Right_Shoulder': {'joint': 'j_shoulder_ri_FK', 'rotate': (90,34,-70), 'tOffset': (0,0,0), 'tLock': False, 'parent': 'Spine_4', 'color': (1,0.2,0)},
-    'Right_Elbow': {'joint': 'j_elbow_ri_FK', 'rotate': (0,0,-135), 'tOffset': (0,0,0), 'tLock': False, 'parent': 'Right_Shoulder', 'color': (1,0.2,0)},
-    'Right_Wrist': {'joint': 'j_wrist_ri_FK', 'rotate': (55,37,-140), 'tOffset': (0,0,0), 'tLock': False, 'parent': 'Right_Elbow', 'color': (1,0.2,0)},
+    'Left_Shoulder': {'joint': 'j_shoulder_le_FK', 'rotate': (90,34,70), 'tOffset': (0,0,0), 'parent': 'Spine_4', 'color': (0.2,0,1)},
+    'Left_Elbow': {'joint': 'j_elbow_le_FK', 'rotate': (0,0,45), 'tOffset': (0,0,0), 'parent': 'Left_Shoulder', 'color': (0.2,0,1)},
+    'Left_Wrist': {'joint': 'j_wrist_le_FK', 'rotate': (55,-28,-58), 'tOffset': (0,0,0), 'parent': 'Left_Elbow', 'color': (0.2,0,1)},
+    'Right_Shoulder': {'joint': 'j_shoulder_ri_FK', 'rotate': (90,34,-70), 'tOffset': (0,0,0), 'parent': 'Spine_4', 'color': (1,0.2,0)},
+    'Right_Elbow': {'joint': 'j_elbow_ri_FK', 'rotate': (0,0,-135), 'tOffset': (0,0,0), 'parent': 'Right_Shoulder', 'color': (1,0.2,0)},
+    'Right_Wrist': {'joint': 'j_wrist_ri_FK', 'rotate': (55,37,-140), 'tOffset': (0,0,0), 'parent': 'Right_Elbow', 'color': (1,0.2,0)},
     
-    'Left_Leg': {'joint': 'j_hip_le_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Main_Root', 'color': (0.2,0,1)},
-    'Left_Knee': {'joint': 'j_knee_le_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Left_Leg', 'color': (0.2,0,1)},
-    'Left_Ankle': {'joint': 'j_ankle_le_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Left_Knee', 'color': (0.2,0,1)},
-    'Right_Leg': {'joint': 'j_hip_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Main_Root', 'color': (1,0.2,0)},
-    'Right_Knee': {'joint': 'j_knee_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Right_Leg', 'color': (1,0.2,0)},
-    'Right_Ankle': {'joint': 'j_ankle_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'tLock': False, 'parent': 'Right_Knee', 'color': (1,0.2,0)},
+    'Left_Leg': {'joint': 'j_hip_le_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'parent': 'Main_Root', 'color': (0.2,0,1)},
+    'Left_Knee': {'joint': 'j_knee_le_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'parent': 'Left_Leg', 'color': (0.2,0,1)},
+    'Left_Ankle': {'joint': 'j_ankle_le_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'parent': 'Left_Knee', 'color': (0.2,0,1)},
+    'Right_Leg': {'joint': 'j_hip_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'parent': 'Main_Root', 'color': (1,0.2,0)},
+    'Right_Knee': {'joint': 'j_knee_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'parent': 'Right_Leg', 'color': (1,0.2,0)},
+    'Right_Ankle': {'joint': 'j_ankle_ri_FK', 'rotate': (0,0,-90), 'tOffset': (0,5,0), 'parent': 'Right_Knee', 'color': (1,0.2,0)},
 }
 
 Fingers = {
-    'Left_Index': {'joint': 'j_index_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
-    'Left_Middle': {'joint': 'j_mid_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
-    'Left_Ring': {'joint': 'j_ring_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
-    'Left_Pinky': {'joint': 'j_pinky_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
-    'Left Thumb': {'joint': 'j_thumb_le','tLock': False, 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left_Index': {'joint': 'j_index_le', 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left_Middle': {'joint': 'j_mid_le', 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left_Ring': {'joint': 'j_ring_le', 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left_Pinky': {'joint': 'j_pinky_le', 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
+    'Left Thumb': {'joint': 'j_thumb_le', 'parent': 'j_wrist_le', 'color': (0,0.2,1)},
 
-    'Right_Index': {'joint': 'j_index_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
-    'Right_Middle': {'joint': 'j_mid_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
-    'Right_Ring': {'joint': 'j_ring_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
-    'Right_Pinky': {'joint': 'j_pinky_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
-    'Right Thumb': {'joint': 'j_thumb_ri', 'tLock': False, 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right_Index': {'joint': 'j_index_ri', 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right_Middle': {'joint': 'j_mid_ri', 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right_Ring': {'joint': 'j_ring_ri', 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right_Pinky': {'joint': 'j_pinky_ri', 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
+    'Right Thumb': {'joint': 'j_thumb_ri', 'parent': 'j_wrist_ri', 'color': (1,0.2,0)},
 }
 Controls = ['Origin']
 
@@ -357,7 +362,7 @@ Shapes = {
         (1.2009009245039124, 4.80360369801565, 0.0)]
         }
 
-def CreateCurve(name='curve', shape=None, color=(0,1,0), translate=(0,0,0), tOffset=(0,0,0), tLock=False, rotate=(0,0,0), rLock=False, scale=(1,1,1), parent='Origin', thickness=2, freeze=True, **args):
+def CreateCurve(name='curve', shape=None, color=(0,1,0), translate=(0,0,0), tOffset=(0,0,0), tLock=False, rotate=(0,0,0), rLock=False, scale=(1,1,1), sLock=True, thickness=2, freeze=True, **args):
     
     # Create the curve
     if shape == None:
@@ -369,6 +374,7 @@ def CreateCurve(name='curve', shape=None, color=(0,1,0), translate=(0,0,0), tOff
     print((rotate[0]), (rotate[1]), (rotate[2]))
     
     # Position the curve correctly
+    # if debug: print("translate: " + str(translate))
     cmds.move(translate[0] + tOffset[0], translate[1] + tOffset[1], translate[2] + tOffset[2], crv)
     cmds.rotate((rotate[0]), (rotate[1]), (rotate[2]), crv)
     cmds.scale(scale[0], scale[1], scale[2], crv)
@@ -397,8 +403,8 @@ def CreateCurve(name='curve', shape=None, color=(0,1,0), translate=(0,0,0), tOff
         cmds.setAttr(crv + '.translate', lock=True)
     if rLock:
         cmds.setAttr(crv + '.rotate', lock=True)
-        
-    cmds.setAttr(crv + '.scale', lock=True)
+    if sLock:   
+        cmds.setAttr(crv + '.scale', lock=True)
     
     return crv
     
@@ -430,19 +436,22 @@ def CreateControl(joint=None, name='curve', shape=None, color=(0,1,0), translate
 
 def CreateControl2(joint=None, name='curve', shape=None, color=(0,1,0), translate=None, tOffset=(0,0,0), tLock=False, rotate=(0,0,0), rLock=False, scale=(1,1,1), parent='Origin', thickness=2, freeze=True, **args):
     
+    # if debug: print("translate not given, setting translate to joint position")
     if translate == None: 
         # Get world coordinates for the joint
         translate = cmds.xform(joint, q=True, ws=True, t=True)
+        if debug: print("position of " + joint + " is " + str(translate))
     
-    Curve = CreateCurve(name, shape, color, translate, tOffset, tLock, rotate, rLock, scale, parent, thickness, freeze, **args)
+    Curve = CreateCurve(name=name, shape=shape, color=color, translate=translate, tOffset=tOffset, tLock=tLock, rotate=rotate, rLock=rLock, scale=scale, parent=parent, thickness=2, freeze=True, **args)
     
     cmds.parentConstraint(Curve, joint, mo=True)
     
-    if cmds.objExists(parent):
-        # Parent the curve to the parent control
-        cmds.parent(Curve, parent, absolute=True)
-    else:
-        cmds.parent(Curve, Controls[-1], absolute=True)
+    if parent != 'skip':
+        if cmds.objExists(parent):
+            # Parent the curve to the parent control
+            cmds.parent(Curve, parent, absolute=True)
+        else:
+            cmds.parent(Curve, Controls[-1], absolute=True)
     
     # print("Constrained " + Curve + " to " + joint)
     
@@ -636,20 +645,12 @@ if __name__ == "__main__":
         # Create the IK handle
         CreateIkHandle(IK_Joints[0], IK_Joints[2], IKs[kinematic]['solver'], kinematic, IKs[kinematic]['rotate'], tOffset=IKs[kinematic]['tOffset'], scale=IKs[kinematic]['scale'], color=IKs[kinematic]['color'])
 
-        
-    ## Create the rest of the curves
-    for i,joint in enumerate(Joints):
-        if cmds.objExists(joint):
-            CreateControl2(joint, name=Joints[joint]['name'], color=Joints[joint]['color'], tOffset=Joints[joint]['tOffset'],tLock=Joints[joint]['tLock'], rLock=Joints[joint]['rLock'], 
-                        rotate=Joints[joint]['rotate'], scale=Joints[joint]['scale'], parent=Joints[joint]['parent'], thickness=Joints[joint]['thickness'])
-        else:
-            print(joint + ' does not exist')
+
     
     # Create the FK controls
     for i,fk in enumerate(FKs):
-
-        
-        control = CreateControl2(joint=FKs[fk]['joint'], name=fk, shape='Sphere Pin', color=FKs[fk]['color'], tOffset=FKs[fk]['tOffset'], tlock=False, rotate=FKs[fk]['rotate'], rLock=False, scale=(1.5,1.5,1.5), parent=FKs[fk]['parent'], thickness=2)
+        if cmds.objExists(FKs[fk]['joint']):
+            CreateControl2(joint=FKs[fk]['joint'], name=fk, shape='Sphere Pin', color=FKs[fk]['color'], tOffset=FKs[fk]['tOffset'], tlock=False, rotate=FKs[fk]['rotate'], rLock=False, scale=(1.5,1.5,1.5), parent=FKs[fk]['parent'], thickness=2)
 
 
 
@@ -666,4 +667,65 @@ if __name__ == "__main__":
         
         # Parent the finger controls to the wrist
         cmds.parentConstraint([Fingers[finger]['parent']], fGroup, mo=True)
+        
+
+    splineJoints= ['j_mainroot', 'j_spinelower', 'j_spineupper', 'j_spine4']
+    splineLocs = []
     
+    for joint in splineJoints:
+        splineLocs.append(cmds.xform(joint, q=True, ws=True, t=True))
+     
+    
+    # splineLocPos2 = [ (splineLocs[0][0] + ((splineLocs[1][0] - splineLocs[0][0]) // 4)),  (splineLocs[0][1] + ((splineLocs[1][1] - splineLocs[0][1]) // 4)),     (splineLocs[0][2] + ((splineLocs[1][2] - splineLocs[0][2]) // 4)) ]
+    # splineLocPos6 = [  (splineLocs[3][0] + ((splineLocs[3][0] - splineLocs[2][0]) // 4)), (splineLocs[3][1] + ((splineLocs[2][1] - splineLocs[2][1]) // 4)),     (splineLocs[3][2] + ((splineLocs[3][2] - splineLocs[2][2]) // 4)) ]
+    # print("point2: ", splineLocPos2, type(splineLocPos2))
+    # splineLocs.insert(1, splineLocPos2)
+    # splineLocs.insert(4, splineLocPos6)
+    Spline = cmds.curve(d=3, p=splineLocs, n='Spine')
+
+    print(splineLocs)   
+    print("Spline: " + Spline)
+    
+    Clusters = ['Origin']
+    Controls = ['Origin']
+    
+    vertexes = cmds.ls(Spline + '.cv[*]', fl=True)
+
+    for i,vertex in enumerate(vertexes):
+        clusterHandle = (cmds.cluster(vertexes[i], n=splineJoints[i] + '_Cluster')[1])
+
+        print(clusterHandle)
+        cmds.makeIdentity(clusterHandle, apply=True, t=1, r=1, s=1, n=0)
+        # cmds.parent(clusterHandle, Clusters[-1])
+        Clusters.append(clusterHandle)
+        
+        
+        
+    for joint in splineJoints:  
+        control = CreateControl2(joint + '_ClusterHandle', name=SpineJoints[joint]['name'], color=SpineJoints[joint]['color'], tOffset=SpineJoints[joint]['tOffset'], 
+                            rotate=SpineJoints[joint]['rotate'], scale=SpineJoints[joint]['scale'], translate=(cmds.xform(joint, q=True, ws=True, t=True)), parent='skip', thickness=SpineJoints[joint]['thickness'])
+        # if Controls[-1] != 'Origin':
+        cmds.parent(control, Controls[-1])
+        
+        Controls.append(control)
+    
+    # Create the IK Spline Handle
+    cmds.ikHandle(sj=splineJoints[0], ee=splineJoints[-1], sol='ikSplineSolver', n='Spine_IKHandle', ccv=False, c=Spline)
+    
+    # Parent the IK Spline Handle to the origin
+    cmds.parent('Spine_IKHandle', 'Origin', absolute=True)
+    
+    # parent the curve to the origin
+    cmds.parent(Spline, 'Origin', absolute=True)
+    
+    for i,cluster in enumerate(Clusters):
+        if i != 0:
+            cmds.parent(cluster, Controls[i], absolute=True)
+            
+    ## Create the rest of the curves
+    for i,joint in enumerate(Joints):
+        if cmds.objExists(joint):
+            CreateControl2(joint, name=Joints[joint]['name'], color=Joints[joint]['color'], tOffset=Joints[joint]['tOffset'], sLock=True, 
+                        rotate=Joints[joint]['rotate'], scale=Joints[joint]['scale'], parent=Joints[joint]['parent'], thickness=Joints[joint]['thickness'])
+        else:
+            print(joint + ' does not exist')
