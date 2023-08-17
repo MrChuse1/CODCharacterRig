@@ -30,10 +30,10 @@ SpineJoints = {
     
 }
 IKs = {
-    'Left_Arm': {'joint': 'j_shoulder_le', 'effector': 'j_wrist_le', 'solver': 'j_elbow_le', 'name': 'Left_Arm', 'rotate': (-144.176,62.738,-125.098), 'tOffset': (0,0,0), 'scale': (6,6,6), 'IK/FKSwitchLoc': (0,0,0), 'color': (0,0,1)},
-    'Right_Arm': {'joint': 'j_shoulder_ri', 'effector': 'j_wrist_ri', 'solver': 'j_elbow_ri', 'name': 'Right_Arm', 'rotate': (-144.176,62.738,-159), 'tOffset': (0,0,0), 'scale': (6,6,6), 'IK/FKSwitchLoc': (0,0,0), 'color': (1,0,0)},
-    'Left_Leg': {'joint': 'j_hip_le', 'effector': 'j_ankle_le', 'solver': 'j_knee_le', 'name': 'Left_Leg', 'rotate': (0,0,0), 'tOffset': (3,0,0), 'scale': (8,8,8), 'IK/FKSwitchLoc': (0,0,0), 'color': (0,0,1)},
-    'Right_Leg': {'joint': 'j_hip_ri', 'effector': 'j_ankle_ri', 'solver': 'j_knee_ri', 'name': 'Right_Leg', 'rotate': (0,0,0), 'tOffset': (3,0,0), 'scale': (8,8,8), 'IK/FKSwitchLoc': (0,0,0), 'color': (1,0,0)}  
+    'Left_Arm': {'joint': 'j_shoulder_le', 'effector': 'j_wrist_le', 'solver': 'j_elbow_le', 'name': 'Left_Arm', 'rotate': (-144.176,62.738,-125.098), 'tOffset': (0,0,0), 'scale': (6,6,6), 'color': (0,0,1)},
+    'Right_Arm': {'joint': 'j_shoulder_ri', 'effector': 'j_wrist_ri', 'solver': 'j_elbow_ri', 'name': 'Right_Arm', 'rotate': (-144.176,62.738,-159), 'tOffset': (0,0,0), 'scale': (6,6,6), 'color': (1,0,0)},
+    'Left_Leg': {'joint': 'j_hip_le', 'effector': 'j_ankle_le', 'solver': 'j_knee_le', 'name': 'Left_Leg', 'rotate': (0,0,0), 'tOffset': (3,0,0), 'scale': (8,8,8), 'color': (0,0,1)},
+    'Right_Leg': {'joint': 'j_hip_ri', 'effector': 'j_ankle_ri', 'solver': 'j_knee_ri', 'name': 'Right_Leg', 'rotate': (0,0,0), 'tOffset': (3,0,0), 'scale': (8,8,8), 'color': (1,0,0)}  
 }
 
 FKs = {
@@ -407,32 +407,6 @@ def CreateCurve(name='curve', shape=None, color=(0,1,0), translate=(0,0,0), tOff
         cmds.setAttr(crv + '.scale', lock=True)
     
     return crv
-    
-        
-def CreateControl(joint=None, name='curve', shape=None, color=(0,1,0), translate=(0,0,0), tOffset=(0,0,0), tLock=False, rotate=(0,0,0), rLock=False, scale=(1,1,1), parent='Origin', thickness=2, **args):
-    
-    if translate == (0,0,0) and joint != None: 
-        # Get world coordinates for the joint
-        translate = cmds.xform(joint, q=True, ws=True, t=True)
-    
-    Curve = CreateCurve(name, shape, color, translate, tOffset, tLock, rotate, rLock, scale, parent, thickness=thickness, **args)
-    
-    if joint != None:
-        # Constrain the rotations to the bone
-        cmds.orientConstraint(Curve, joint, mo=True)
-        
-        if name != 'Origin':
-            cmds.parentConstraint(joint, Curve, mo=True, sr=['x','y','z'])
-        else:
-            cmds.parentConstraint(Curve, joint, mo=True)
-        
-        if parent != None:
-            # Parent the curve to the parent control
-            cmds.parent(Curve, parent, absolute=True)
-    
-    Controls.append(Curve)
-    
-    return Curve
 
 def CreateControl2(joint=None, name='curve', shape=None, color=(0,1,0), translate=None, tOffset=(0,0,0), tLock=False, rotate=(0,0,0), rLock=False, scale=(1,1,1), parent='Origin', thickness=2, freeze=True, **args):
     
@@ -480,11 +454,7 @@ def CreateIkFkJoints(name, joint, effector, solver, group='Joints'):
             cmds.parent(IKJoint, 'Origin', absolute=True)
             cmds.parentConstraint(IKMaster, IKJoint)
             
-        
-        
         IKConstraints.append(cmds.parentConstraint(IKJoint, j, mo=True)[0])
-        
-        
         IKJoints.append(IKJoint)
         
         FKJoint = cmds.duplicate(j, n=j + '_FK', po=True)[0]
@@ -493,10 +463,6 @@ def CreateIkFkJoints(name, joint, effector, solver, group='Joints'):
             cmds.parent(FKJoint, FKJoints[-1], absolute=True)
         except IndexError:
             cmds.parent(FKJoint, 'Origin', absolute=True)
-            # FKGroup = cmds.group(FKJoint, n=name + '_FK_Master', a=True)
-            # FKJointLoc = cmds.xform(FKJoint, q=True, ws=True, t=True)
-            # # cmds.setAttr(FKMaster + '.rotatePivot', FKJointLoc[0], FKJointLoc[1], FKJointLoc[2])
-            # cmds.parentConstraint(IKMaster, FKGroup)
         
         FKConstraints.append(cmds.parentConstraint(FKJoint, j, mo=True)[0])
         
@@ -522,6 +488,7 @@ def CreateIkHandle(joint, effector, solver, name:str, rotate=(0,0,0), tOffset=(0
 
     solverLoc = (solverLoc[0] + PVtOffset[0], solverLoc[1] + PVtOffset[1], solverLoc[2] + PVtOffset[2])
     
+    # Create the pole vector
     pv = CreateCurve(name=name + '_PV', shape='Sphere', color=(color[0], color[1] + 0.3, color[2]), translate=solverLoc, tOffset=PVtOffset, parent='Origin', thickness=1)
     
     # Create the ik handle
@@ -530,8 +497,6 @@ def CreateIkHandle(joint, effector, solver, name:str, rotate=(0,0,0), tOffset=(0
     # Create the pole vector constraint
     cmds.poleVectorConstraint(pv, ik)
 
-    
-    
     # Create a curve for the ik
     ikControl = CreateCurve(name=name + '_IK', color=color, translate=(cmds.xform(ik, q=True, ws=True, t=True)), tOffset=tOffset, scale=scale, rotate=rotate, thickness=thickness)
     
@@ -540,7 +505,6 @@ def CreateIkHandle(joint, effector, solver, name:str, rotate=(0,0,0), tOffset=(0
     
     # Parent the pole vector to the origin
     cmds.parent(pv, 'Origin', absolute=True)
-    
     
     # Parent the curve to the origin
     cmds.parent(ikControl, 'Origin', absolute=True)
@@ -598,7 +562,7 @@ def CreateFingerControls(fingerName, finger):
 
 if __name__ == "__main__":
     # Create the origin curve
-    CreateControl('tag_origin', name='Origin', shape='Arrow', rotate=(90,0,0), scale=(20,20,20), parent='Joints')
+    CreateControl2('tag_origin', name='Origin', shape='Arrow', rotate=(90,0,0), scale=(20,20,20), parent='Joints')
 
     ## Create the IK joints
     
@@ -683,6 +647,15 @@ if __name__ == "__main__":
     # splineLocs.insert(4, splineLocPos6)
     Spline = cmds.curve(d=3, p=splineLocs, n='Spine')
 
+    # Lock the curves transforms
+    cmds.setAttr(Spline + '.translate', lock=True)
+    cmds.setAttr(Spline + '.rotate', lock=True)
+    cmds.setAttr(Spline + '.scale', lock=True)
+    
+    # Hide the curve
+    cmds.setAttr(Spline + '.visibility', 0)
+    cmds.setAttr(Spline + '.hiddenInOutliner', 1)
+    
     print(splineLocs)   
     print("Spline: " + Spline)
     
@@ -691,6 +664,7 @@ if __name__ == "__main__":
     
     vertexes = cmds.ls(Spline + '.cv[*]', fl=True)
 
+    # Create a cluster for each vertex
     for i,vertex in enumerate(vertexes):
         clusterHandle = (cmds.cluster(vertexes[i], n=splineJoints[i] + '_Cluster')[1])
 
@@ -700,7 +674,7 @@ if __name__ == "__main__":
         Clusters.append(clusterHandle)
         
         
-        
+    # Create the controls for the spline
     for joint in splineJoints:  
         control = CreateControl2(joint + '_ClusterHandle', name=SpineJoints[joint]['name'], color=SpineJoints[joint]['color'], tOffset=SpineJoints[joint]['tOffset'], 
                             rotate=SpineJoints[joint]['rotate'], scale=SpineJoints[joint]['scale'], translate=(cmds.xform(joint, q=True, ws=True, t=True)), parent='skip', thickness=SpineJoints[joint]['thickness'])
@@ -715,8 +689,8 @@ if __name__ == "__main__":
     # Parent the IK Spline Handle to the origin
     cmds.parent('Spine_IKHandle', 'Origin', absolute=True)
     
-    # parent the curve to the origin
-    cmds.parent(Spline, 'Origin', absolute=True)
+    # unparent the curve to the origin
+    cmds.parent(Spline, world=True)
     
     for i,cluster in enumerate(Clusters):
         if i != 0:
